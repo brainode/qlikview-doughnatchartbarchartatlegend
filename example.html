@@ -1,0 +1,155 @@
+<!-- Code from d3-graph-gallery.com -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+<!-- <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script> -->
+<link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
+<!-- Create a div where the graph will take place -->
+
+
+
+<!-- <div class="grid">
+    <div class="grid-item grid-item--fullwidth"></div>
+</div> -->
+<div class="row">
+    <div class="col s4">
+        <div id="dohnutchart"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col s4">
+        <div id="table" style="float:left"></div>
+    </div>
+</div>
+        
+
+<script>
+var data = [
+  {"Type":"Val1","Value":-3.6},
+  {"Type":"Val2","Value":-4.5},
+  {"Type":"Val3","Value":-6.2},
+  {"Type":"Val4","Value":-6.3},
+  {"Type":"Val5","Value":-6.8},
+  {"Type":"Val6","Value":-72.6}
+];
+var dataDohnut = {
+    "Val1":3.6,
+    "Val2":4.5,
+    "Val3":6.2,
+    "Val4":6.3,
+    "Val5":6.8,
+    "Val6":72.6
+};
+data.columns = ["Type","Value"];
+
+// set the color scale
+var color = d3.scaleOrdinal()
+  .domain(data)
+  .range(["#e5ff65","#b852cc","#ffa64d","#6df2bb","#a61168","#e64560","#73a2ff","#2944cc","#33cc4c","#ff4040"]);
+
+///////////////////////////////////////////////////////////////////////////////////
+
+var colorDohnut = d3.scaleOrdinal()
+  .domain(dataDohnut)
+  .range(["#e5ff65","#b852cc","#ffa64d","#6df2bb","#a61168","#e64560","#73a2ff","#2944cc","#33cc4c","#ff4040"]);
+
+
+var width_Dohnut = 450
+    height_Dohnut = 450
+    margin_Dohnut = 40
+
+// The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+var radius = Math.min(width_Dohnut, height_Dohnut) / 2 - margin_Dohnut
+
+// append the svg object to the div called 'my_dataviz'
+var svgDohnut = d3.select("#dohnutchart")
+  .append("svg")
+    .attr("width", width_Dohnut)
+    .attr("height", height_Dohnut)
+    .style('display','block')
+    .style('margin-left','auto')
+    .style('margin-right','auto')
+  .append("g")
+    .attr("transform", "translate(" + width_Dohnut / 2 + "," + height_Dohnut / 2 + ")");
+
+var pie = d3.pie().value(function(d) {return d.value; })
+var data_ready = pie(d3.entries(dataDohnut))
+
+
+svgDohnut
+  .selectAll('whatever')
+  .data(data_ready)
+  .enter()
+  .append('path')
+  .attr('d', d3.arc()
+    .innerRadius(100)         // This is the size of the donut hole
+    .outerRadius(radius)
+  )
+  .attr('fill', function(d){return(color(d.data.key)); })
+  .attr("stroke", "black")
+  .style("stroke-width", "2px")
+  .style("opacity", 0.7)
+
+////////////////////////////////////////////////////////////////////////////////////
+var margin = {top: 0, right: 0, bottom: 0, left: 0},
+    width = 200,
+    height = 500;
+
+// set the ranges
+var y = d3.scaleBand()
+    .range([height, 0])
+    .padding(0.7);
+
+var x = d3.scaleLinear()
+    .range([0, width]);
+x.clamp(true);
+// Scale the range of the data in the domains
+x.domain(
+  [-100,10]
+//   d3.extent(data, function (d) {
+//     return d.Value;
+// })
+);
+y.domain(data.map(function (d) {
+    return d.Type;
+}));
+
+
+var table = d3.select('#table')
+    .append('table')
+    .append('tbody');
+for(var i=data.length-1;i>=0;i--){
+    var tr = table.append('tr');
+    tr.append('td')
+    .style("height","20px")
+    .append('text')
+    .text(data[i].Type);
+    var svg = tr.append('td')
+    .append('svg').attr('width', width + margin.left + margin.right).attr('height', (height + margin.top + margin.bottom)/data.length).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    svg.append("rect")
+    .attr("x",  x(Math.min(0, data[i].Value)))
+    .attr("y", height/(data.length*2))
+    .attr("width", Math.abs(x(data[i].Value) - x(0)))
+    .attr("height", y.bandwidth())
+    .attr("rx", "10")
+    .attr("ry", "10")
+    .attr('fill', color(data[i].Type));
+
+    svg.append("text")
+        .attr("x", x(Math.max(0, data[i].Value))-(data[i].Value.toString().length*8))
+        .attr("y", height/(data.length*2)-7)
+        .attr("width", "20px")
+        .attr("height", y.bandwidth())
+        .text(-data[i].Value+"%")
+        .style("fill",'black');
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////
+
+
+</script>
+<!-- <script type="text/javascript" src="js/materialize.min.js"></script> -->

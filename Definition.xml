@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ExtensionObject Label="Doughnat chart barchart legend" Description="Doughnat chart with barchart at legend" PageHeight="700">
+    <Dimension Label="Dim" Initial="" Multiple=""/>
+	<Measurement Label="Value" Initial="" TargetName="Val" />
+    <Text Label="colorsArray" Type="text" Initial="" Expression=""/> 
+    <Text Label="colorForDoughnatBorder" Type="color" Initial="" Expression=""/> 
+    <Text Label="textColor" Type="color" Initial="" Expression=""/> 
+</ExtensionObject>
