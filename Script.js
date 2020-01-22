@@ -20,8 +20,6 @@ function prepareData(hypercube){
     for(var i=0;i<dataBarchart.length;i++){
         dataDohnut[dataBarchart[i].Type] = -dataBarchart[i].Value;
     }
-    console.log(dataDohnut);
-    console.log(dataDohnutOld);
     //dataDohnut.sort(function(a,b){ console.log(a);});
     var preparedData = [];
     preparedData["doughnut"] = dataDohnut;
@@ -29,7 +27,7 @@ function prepareData(hypercube){
     return preparedData;
 }
 
-function drawDoughnut(height,width,data,colors,borderColor){
+function drawDoughnut(objId,height,width,data,colors,borderColor,pieBorderWeight){
     var width_Dohnut = width/1.5,
     height_Dohnut = width/1.5,
     margin_Dohnut = 20;
@@ -40,7 +38,7 @@ function drawDoughnut(height,width,data,colors,borderColor){
 
     var margin_left = (width-width_Dohnut)/2-20;
     // append the svg object to the div called 'my_dataviz'
-    var svgDohnut = d3.select("#dohnutchart")
+    var svgDohnut = d3.select("#dohnutchart_"+objId)
     .append("svg")
         .attr("width", width_Dohnut)
         .attr("height", height_Dohnut)
@@ -53,9 +51,7 @@ function drawDoughnut(height,width,data,colors,borderColor){
     var pie = d3.pie().value(function(d) {return d.value; });
     var data_ready = pie(d3.entries(data));
 
-    console.log(data_ready);
     colorsForGraph = d3.scaleOrdinal().domain(data_ready).range(colors);
-    console.log(colorsForGraph);
 
     svgDohnut
     .selectAll('whatever')
@@ -68,11 +64,11 @@ function drawDoughnut(height,width,data,colors,borderColor){
     )
     .attr('fill', function(d){ return(colorsForGraph(d.data.key)); })
     .attr("stroke", borderColor)
-    .style("stroke-width", "2px")
+    .style("stroke-width", pieBorderWeight+"px")
     .style("opacity", 0.7);
 }
 
-function drawBarchart(height,width,data,colors,textColor){
+function drawBarchart(objId,height,width,data,colors,textColor){
     var margin = {top: 0, right: 0, bottom: 0, left: 0},
     width = width/2,
     height = height-width*1.9;
@@ -95,11 +91,9 @@ function drawBarchart(height,width,data,colors,textColor){
         return d.Type;
     }));
 
-    console.log(data);
     colorsForGraph = d3.scaleOrdinal().domain(data).range(colors);
-    console.log(colorsForGraph);
 
-    var table = d3.select('#table')
+    var table = d3.select('#table_'+objId)
         .append('table')
         .append('tbody');
     for(var i=0;i<data.length;i++){
@@ -136,18 +130,19 @@ function drawBarchart(height,width,data,colors,textColor){
 function EnterPoint(){
     Qv.AddExtension("PieChartBarChartLegend",
     function(){
-        // var objId = this.Layout.ObjectId.replace('\\','__');
+        var objId = this.Layout.ObjectId.replace('\\','__');
         //todo. Add dynamic class using objId, to make possibility use more than 1 chart on page.
-        this.Element.innerHTML = "<div class='row'><div class='col s12'><div id='dohnutchart'></div></div></div><div class='row'><div class='col s12'><div id='table'></div></div></div>";
+        this.Element.innerHTML = "<div class='row'><div class='col s12'><div id='dohnutchart_"+objId+"'></div></div></div><div class='row'><div class='col s12'><div id='table_"+objId+"'></div></div></div>";
         // this.Element.innerHTML = "<div class='container'><div class='chart chart_main_"+objId+"'></div><div class='chart'><table class='chart_table_"+objId+"'></table></div></div>";
         var height = this.Layout.Super.GetHeight();
         var width = this.Layout.Super.GetWidth();
         var colorsForGraph = this.Layout.Text0.text.split(';');
         var colorForDoughnatBorder = this.Layout.Text1.text;
         var textColor = this.Layout.Text2.text;
+        var pieBorderWeight = this.Layout.Text3.text;
         var data = prepareData(this.Data.Rows);  
-        drawDoughnut(height,width,data["doughnut"],colorsForGraph,colorForDoughnatBorder);
-        drawBarchart(height,width,data["barchart"],colorsForGraph,textColor);
+        drawDoughnut(objId,height,width,data["doughnut"],colorsForGraph,colorForDoughnatBorder,pieBorderWeight);
+        drawBarchart(objId,height,width,data["barchart"],colorsForGraph,textColor);
     });
 }
 

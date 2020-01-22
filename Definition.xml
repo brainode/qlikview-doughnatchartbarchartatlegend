@@ -5,4 +5,5 @@
     <Text Label="colorsArray" Type="text" Initial="" Expression=""/> 
     <Text Label="colorForDoughnatBorder" Type="color" Initial="" Expression=""/> 
     <Text Label="textColor" Type="color" Initial="" Expression=""/> 
+    <Text Label="Border width" Type="text" Initial="" Expression=""/> 
 </ExtensionObject>
